@@ -7,21 +7,23 @@ import configparser
 app = Flask(__name__)
 
 # Configure Basic Authentication
-app.config['BASIC_AUTH_USERNAME'] = 'ouss'
-app.config['BASIC_AUTH_PASSWORD'] = 'pass'
+app.config["BASIC_AUTH_USERNAME"] = "ouss"
+app.config["BASIC_AUTH_PASSWORD"] = "pass"
 basic_auth = BasicAuth(app)
 
 #############################
 # Helper Functions          #
 #############################
 
+
 def fail2ban_status():
     """Check the status of the Fail2ban service."""
-    status = os.popen('service fail2ban status').read()
+    status = os.popen("service fail2ban status").read()
     if "inactive" in status or "not running" in status:
         return "Fail2ban is not running"
     elif "active" in status or "is running" in status:
         return "Fail2ban is running"
+
 
 def read_config(file_path):
     """Read and return the configuration from the specified file."""
@@ -29,100 +31,117 @@ def read_config(file_path):
     cp.read(file_path)
     return cp
 
+
 def get_country(ip):
     """Retrieve country information for a given IP address."""
-    response = requests.get(f'http://ip-api.com/json/{ip}')
+    response = requests.get(f"http://ip-api.com/json/{ip}")
     return response.json()
+
 
 #############################
 # Routes                    #
 #############################
 
-@app.route('/')
+
+@app.route("/")
 @basic_auth.required
 def redirect_to_home():
-    return redirect('/home', code=302)
+    return redirect("/home", code=302)
 
-@app.route('/home', methods=['GET', 'POST'])
+
+@app.route("/home", methods=["GET", "POST"])
 @basic_auth.required
 def home():
     status = fail2ban_status()
-    return render_template('index.html', status=status)
+    return render_template("index.html", status=status)
 
-@app.route('/start', methods=['POST'])
+
+@app.route("/start", methods=["POST"])
 def start_fail2ban():
-    os.popen('service fail2ban start')
+    os.popen("service fail2ban start")
     return redirect("/", code=302)
 
-@app.route('/stop', methods=['POST'])
+
+@app.route("/stop", methods=["POST"])
 def stop_fail2ban():
-    os.popen('service fail2ban stop')
+    os.popen("service fail2ban stop")
     return redirect("/", code=302)
 
-@app.route('/config', methods=['GET', 'POST'])
+
+@app.route("/config", methods=["GET", "POST"])
 @basic_auth.required
 def config():
-    config_file = '/etc/fail2ban/jail.conf'
+    config_file = "/etc/fail2ban/jail.conf"
     cp = read_config(config_file)
     services = cp.sections()
-    return render_template('config.html', cp=cp, services=services)
+    return render_template("config.html", cp=cp, services=services)
 
-@app.route('/enable/<service>', methods=['POST'])
+
+@app.route("/enable/<service>", methods=["POST"])
 def enable_service(service):
-    config_file = '/etc/fail2ban/jail.conf'
+    config_file = "/etc/fail2ban/jail.conf"
     cp = read_config(config_file)
-    cp.set(service, 'enabled', 'true')
-    with open(config_file, 'w') as configfile:
+    cp.set(service, "enabled", "true")
+    with open(config_file, "w") as configfile:
         cp.write(configfile)
-    os.popen('service fail2ban restart')
+    os.popen("service fail2ban restart")
     return redirect("/config", code=302)
 
-@app.route('/disable/<service>', methods=['POST'])
+
+@app.route("/disable/<service>", methods=["POST"])
 def disable_service(service):
-    config_file = '/etc/fail2ban/jail.conf'
+    config_file = "/etc/fail2ban/jail.conf"
     cp = read_config(config_file)
-    cp.set(service, 'enabled', 'false')
-    with open(config_file, 'w') as configfile:
+    cp.set(service, "enabled", "false")
+    with open(config_file, "w") as configfile:
         cp.write(configfile)
-    os.popen('service fail2ban restart')
+    os.popen("service fail2ban restart")
     return redirect("/config", code=302)
 
-@app.route('/display/<filter>', methods=['GET', 'POST'])
+
+@app.route("/display/<filter>", methods=["GET", "POST"])
 @basic_auth.required
 def display_filter(filter):
     try:
         file_path = f"/etc/fail2ban/filter.d/{filter}.conf"
-        with open(file_path, 'r') as file:
+        with open(file_path, "r") as file:
             filter_content = file.read()
     except IOError:
         filter_content = "There is a problem with this filter."
-    return render_template('filter.html', filter_content=filter_content, service=filter)
+    return render_template("filter.html", filter_content=filter_content, service=filter)
 
-@app.route('/save/<filter>', methods=['POST'])
+
+@app.route("/save/<filter>", methods=["POST"])
 def save_filter(filter):
     try:
-        filter_content = request.form['filter']
+        filter_content = request.form["filter"]
         file_path = f"/etc/fail2ban/filter.d/{filter}.conf"
-        with open(file_path, 'w') as file:
+        with open(file_path, "w") as file:
             file.write(filter_content)
     except IOError:
-        return render_template('filter.html', filter_content="There is a problem with this filter.")
-    return redirect('/config', code=302)
+        return render_template(
+            "filter.html", filter_content="There is a problem with this filter."
+        )
+    return redirect("/config", code=302)
 
-@app.route('/banned', methods=['GET', 'POST'])
+
+@app.route("/banned", methods=["GET", "POST"])
 @basic_auth.required
 def banned():
     banned_ips = []
-    with open('/var/log/fail2ban.log', 'r') as log_file:
+    with open("/var/log/fail2ban.log", "r") as log_file:
         for line in log_file:
-            if 'Ban' in line:
+            if "Ban" in line:
                 banned_ips.append(line)
-    return render_template('banned.html', banned_ips=banned_ips, get_country=get_country)
+    return render_template(
+        "banned.html", banned_ips=banned_ips, get_country=get_country
+    )
+
 
 #############################
 # App Launcher              #
 #############################
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     app.debug = True
-    app.run(host='0.0.0.0')
+    app.run(host="0.0.0.0")
