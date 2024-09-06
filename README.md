@@ -1,103 +1,101 @@
-fail2ban-dashboard
-==================
-[![Build Status](https://travis-ci.org/oussemos/fail2ban-dashboard.svg?branch=master)](https://travis-ci.org/oussemos/fail2ban-dashboard)
+# Fail2ban Dashboard
 
-Fail2ban web dashboard written with Flask framework.
+[![Build Status](https://travis-ci.org/luova-club/fail2ban-dashboard.svg?branch=master)](https://travis-ci.org/luova-club/fail2ban-dashboard)
 
+A sleek web dashboard for Fail2ban, built with Flask, to offer enhanced visibility and control over your security.
 
-PS: I've started this project in 2015 to learn Python/Flask
+## Overview
 
+Fail2ban Dashboard is a web application developed with Flask to help monitor and manage Fail2ban on your server. Initially created in 2015 as a learning project for Python and Flask, it has since evolved to offer more robust features and improved usability.
 
-### Quick Start
+## Quick Start
 
-1. Clone the repo
-  ```
-  $ git clone https://github.com/oussemos/fail2ban-dashboard.git
-  $ cd fail2ban-dashboard
-  ```
+### Clone the Repository
 
-2. Initialize and activate a virtualenv:
-  ```
-  $ virtualenv --no-site-packages env
-  $ source env/bin/activate
-  ```
-
-3. Install the dependencies:
-  ```
-  $ pip install -r requirements.txt
-  ```
-
-5. Run the development server:
-  ```
-  $ python home.py
-  ```
-
-6. Navigate to [http://localhost:5000](http://localhost:5000)
-
-login: ouss
-password: pass
-
-
-### Deployment 
-
-For more stability, you can deploy the application with Gunicorn.
-
-  ```
-  $ pip install gunicorn
-  $ gunicorn home:app -p fail2ban_dashboard.pid -b 0.0.0.0:5000 -D
-  ```
-
-### Issues
-
-* The application is still under development, don't hesitate to give advice, open an <a href="https://github.com/oussemos/fail2ban-dashboard/issues">issue</a> or contribute.
-
-
-### System
-
-* This app was developed and tested under Debian Wheezy
-
-
-### Screenshots
-
-![Home](docs/screenshots/home.png)
-
-![Config](docs/screenshots/config.png)
-
-![Config filter](docs/screenshots/configure_filter.PNG)
-
-![Banned IP](docs/screenshots/get_country1.PNG)
-
-### Changelog
-
-(28-10-2014) : new features
-
-* Filters configuration
-* Authentification with password
-
-(21-09-2015)
-
-* Fail2ban-dashboard is now compatible with init and systemd, Thanks to @<a href="https://github.com/nocternology">nocternology</a>
-
-(30-03-2016)
-
-* Get the country of blocked IP using this <a href="http://ip-api.com/json/">API</a>
-
-### Bonus
-
-(15-11-2014)
-
-* A Docker fail2ban-dashboard preconfigured container based on Debian Wheezy
-```
-$ docker pull oussemos/fail2ban-dashboard
+```bash
+$ git clone https://github.com/luova-club/fail2ban-dashboard.git
+$ cd fail2ban-dashboard
 ```
 
-### Author
+### Set Up the Environment
 
-<a href="http://oussema.cherni.tn">Oussema Cherni</a> (@<a href="http://twitter.com/oussemos">oussemos</a> on Twitter)
+Create and activate a virtual environment:
 
-### License
+```bash
+$ virtualenv --no-site-packages env
+$ source env/bin/activate
+```
 
-Open source licensed under the MIT license.
+Install the required dependencies:
 
+```bash
+$ pip install -r requirements.txt
+```
 
+### Run the Development Server
 
+```bash
+$ python home.py
+```
+
+Visit [http://localhost:5000](http://localhost:5000) in your browser.
+
+**Login:** `ouss`  
+**Password:** `pass`
+
+## Deployment
+
+For a more production-ready setup, deploy the application using Gunicorn:
+
+```bash
+$ pip install gunicorn
+$ gunicorn home:app -p fail2ban_dashboard.pid -b 0.0.0.0:5000 -D
+```
+
+## Contributing
+
+The project is actively under development. We welcome contributions, feedback, and suggestions. Feel free to open an [issue](https://github.com/luova-club/fail2ban-dashboard/issues) or contribute directly to the codebase.
+
+## System Requirements
+
+Developed and tested on Debian Wheezy. Ensure compatibility with your environment.
+
+## Screenshots
+
+- **Home Dashboard:**
+
+  ![Home](docs/screenshots/home.png)
+
+- **Configuration:**
+
+  ![Config](docs/screenshots/config.png)
+
+- **Filter Configuration:**
+
+  ![Config filter](docs/screenshots/configure_filter.PNG)
+
+- **Banned IP Details:**
+
+  ![Banned IP](docs/screenshots/get_country1.PNG)
+
+## Changelog
+
+- **(28-10-2014)**: Introduced filter configuration and password authentication.
+- **(21-09-2015)**: Added compatibility with init and systemd. Thanks to [@nocternology](https://github.com/nocternology).
+- **(30-03-2016)**: Integrated IP geolocation via [ip-api.com](http://ip-api.com/json/).
+
+## Bonus
+
+- **(15-11-2014)**: Available as a Docker container preconfigured with Debian Wheezy.
+
+  ```bash
+  $ docker pull oussemos/fail2ban-dashboard
+  ```
+
+## Author
+
+Developed by Verso.
+
+## License
+
+This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
